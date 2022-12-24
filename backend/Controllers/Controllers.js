@@ -5,9 +5,7 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET_KEY = "SECURITYKEY";
 
 export const postMessages = async (req, res) => {
-  console.log(req.body)
   const { FullName, Email, Message } = req.body;
-console.log(req.body)
   const newMessage = new ContactusModel({
     FullName,
     Email,
@@ -23,7 +21,6 @@ console.log(req.body)
 };
 
 export const postMembers = async (req, res) => {
-  console.log(req.body)
 
   const { FullName, UserName, Email, Password, PhoneNumber } = req.body;
 
@@ -46,10 +43,8 @@ export const postMembers = async (req, res) => {
   });
   try {
     await newMember.save();
-    res.json(newMember);
-    console.log(newMember)
-    console.log("Member Saved");
-    console.log(newMember)
+    res.json(newMember); 
+    console.log("Member Saved"); 
   } catch (error) {
     console.log("Member Not saved...");
   }
@@ -59,10 +54,23 @@ export const getMessages = async (req, res) => {
   try {
     const getMessage = await ContactusModel.find();
     res.json(getMessage);
+   
   } catch (error) {
     console.log("Not found any data.");
   }
 };
+
+export const deleteMessages = async (req, res) => {
+  const newid = req.params.id;
+  try {
+    await ContactusModel.findByIdAndRemove(newid);
+    res.json("deleted");
+  } catch (error) {
+    console.log("Error during deleting .... ");
+  }
+};
+
+
 // export const getApplicationById = async (req, res) => {
 //   try {
 //     const user = await hostelApplicationModel.findById(req.params.id);
@@ -83,17 +91,6 @@ export const getMessages = async (req, res) => {
 //     }
 // };
 
-// export const deleteApplication = async (req, res) => {
-//   console.log("Delete is working");
-//   const newid = req.params.id;
-//   console.log(newid);
-//   try {
-//     await hostelApplicationModel.findByIdAndRemove(newid);
-//     res.json("deleted");
-//   } catch (error) {
-//     console.log("Error during deleting .... ");
-//   }
-// };
 
 // export const Login= async (req, res) => {
 //   try {
