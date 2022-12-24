@@ -5,8 +5,9 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET_KEY = "SECURITYKEY";
 
 export const postMessages = async (req, res) => {
+  console.log(req.body)
   const { FullName, Email, Message } = req.body;
-
+console.log(req.body)
   const newMessage = new ContactusModel({
     FullName,
     Email,
@@ -22,6 +23,8 @@ export const postMessages = async (req, res) => {
 };
 
 export const postMembers = async (req, res) => {
+  console.log(req.body)
+
   const { FullName, UserName, Email, Password, PhoneNumber } = req.body;
 
 //   let existingUser;
@@ -44,20 +47,22 @@ export const postMembers = async (req, res) => {
   try {
     await newMember.save();
     res.json(newMember);
+    console.log(newMember)
     console.log("Member Saved");
+    console.log(newMember)
   } catch (error) {
     console.log("Member Not saved...");
   }
 };
 
-// export const getApplication = async (req, res) => {
-//   try {
-//     const hostelApplications = await hostelApplicationModel.find();
-//     res.json(hostelApplications);
-//   } catch (error) {
-//     console.log("Not found any data.");
-//   }
-// };
+export const getMessages = async (req, res) => {
+  try {
+    const getMessage = await ContactusModel.find();
+    res.json(getMessage);
+  } catch (error) {
+    console.log("Not found any data.");
+  }
+};
 // export const getApplicationById = async (req, res) => {
 //   try {
 //     const user = await hostelApplicationModel.findById(req.params.id);
