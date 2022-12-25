@@ -5,7 +5,7 @@ const ContactusStructure = mongoose.Schema({
   
   Email: {
     type: String,
-    unique: true,
+
     required: [true, "please add your email"],
   },
   Message:{

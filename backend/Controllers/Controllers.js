@@ -13,39 +13,41 @@ export const postMessages = async (req, res) => {
   });
   try {
     await newMessage.save();
-    res.json(newMessage);
+    res.status(200).json(newMessage);
     console.log("Message Saved");
   } catch (error) {
+    res.status(505).json("Server Error");
     console.log("Message Not saved...");
   }
 };
 
 export const postMembers = async (req, res) => {
 
-  const { FullName, UserName, Email, Password, PhoneNumber } = req.body;
+  const { FullName, UserName, Email, Password, confirmPassword, PhoneNumber } = req.body;
+    try {
+     const existingUser = await SignupModel.findOne({ UserName: UserName } || {Email:Email});
+      if (existingUser) {
+        res.status(404).json("User already exist");
+       }
+    } catch (err) {
+      console.log("errors");
+      res.status(505).json("Server Error");
+    }
 
-//   let existingUser;
-  //   try {
-  //     existingUser = await hostelApplicationModel.findOne({ UserName: UserName });
-  //   } catch (err) {
-  //     console.log("errors");
-  //   }
-  //   if (existingUser) {
-  //     return console.log("exist");
-  //   }
-  const hashPassword = bcrypt.hashSync(Password, 2);
   const newMember = new SignupModel({
     FullName,
     UserName,
     Email,
-    Password: hashPassword,
+    Password,
+    confirmPassword,
     PhoneNumber,
   });
   try {
     await newMember.save();
-    res.json(newMember); 
+    res.status(200).json(newMember); 
     console.log("Member Saved"); 
   } catch (error) {
+    res.status(505).json("Server Error");
     console.log("Member Not saved...");
   }
 };
@@ -53,9 +55,10 @@ export const postMembers = async (req, res) => {
 export const getMessages = async (req, res) => {
   try {
     const getMessage = await ContactusModel.find();
-    res.json(getMessage);
+    res.status(200).json(getMessage);
    
   } catch (error) {
+    res.status(505).json("Server Error");
     console.log("Not found any data.");
   }
 };
@@ -64,9 +67,58 @@ export const deleteMessages = async (req, res) => {
   const newid = req.params.id;
   try {
     await ContactusModel.findByIdAndRemove(newid);
-    res.json("deleted");
+    res.status(200).json("deleted");
   } catch (error) {
+    res.status(505).json("Server Error");
     console.log("Error during deleting .... ");
+  }
+};
+
+
+export const Login= async (req, res) => {
+  try {
+    const { User, Password } = req.body;
+    console.log(req.body)
+    if (!User || !Password){
+      res.status(404).json("Invalid Credntials")
+    }
+    else{
+    const userlogin = await SignupModel.findOne({ Username: User } || {Email:User});
+    if (userlogin) {
+      const isMatch = await bcrypt.compare(Password, userlogin.Password);
+      if (isMatch) {
+        console.log("loged in successfully");
+        res.send("200");
+        //return res.status(200).json({message:"login successfully"})
+      } else {
+        console.log("Invalid credentials");
+        
+        // return res.status(404).json({error:"Invalid credentials pass"});
+        res.send("404");
+      }
+    }
+  }
+      // const token= await userlogin.generateAuthToken();
+
+      // try {
+      //   var token = jwt.sign({ _id: userlogin._id }, JWT_SECRET_KEY, {
+      //     expiresIn: "35s",
+      //   });
+      // } catch (error) {
+      //   console.log("token not generated");
+      //   console.log(error);
+      // }
+      // console.log(token);
+      // // res.cookie("jwToken",token)
+      // res.cookie("jwToken", token, {
+      //   path: "/",
+      //   expires: new Date(Date.now() + 1000 * 30),
+      //   httpOnly: true,
+      //   sameSite: "lax",
+      // });
+  } catch (error) {
+    res.status(505).json("Server Error");
+  
   }
 };
 
@@ -91,53 +143,6 @@ export const deleteMessages = async (req, res) => {
 //     }
 // };
 
-
-// export const Login= async (req, res) => {
-//   try {
-//     const { user, pass } = req.body;
-//     console.log(user);
-//     const userlogin = await hostelApplicationModel.findOne({ Username: user });
-//     if (userlogin) {
-//       // console.log("loged in successfully");
-//       const isMatch = await bcrypt.compare(pass, userlogin.Password);
-//       // const token= await userlogin.generateAuthToken();
-
-//       try {
-//         var token = jwt.sign({ _id: userlogin._id }, JWT_SECRET_KEY, {
-//           expiresIn: "35s",
-//         });
-//       } catch (error) {
-//         console.log("token not generated");
-//         console.log(error);
-//       }
-//       console.log(token);
-//       // res.cookie("jwToken",token)
-//       res.cookie("jwToken", token, {
-//         path: "/",
-//         expires: new Date(Date.now() + 1000 * 30),
-//         httpOnly: true,
-//         sameSite: "lax",
-//       });
-//       if (isMatch) {
-//         console.log("loged in successfully");
-//         res.send("200");
-//         //return res.status(200).json({message:"login successfully"})
-//       } else {
-//         console.log(" console Invalid credentials pass");
-//         // return res.status(404).json({error:"Invalid credentials pass"});
-//         res.send("404");
-//       }
-//     } else {
-//       console.log("Invalid credentials mail");
-//       // return res.status(400).json({error:"Invalid credentials pass"});
-//       res.send("404");
-//       // return res.status(404).json({error:"Invalid credentials mail"});
-//     }
-//   } catch (error) {
-//     console.log("not login");
-//     console.log(error);
-//   }
-// };
 
 // export const verifiedToken = (req, res, next) => {
 //   const cookies = req.headers.cookie;

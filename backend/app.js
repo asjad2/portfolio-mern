@@ -17,7 +17,7 @@ mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true} )
 
 if (process.env.NODE_ENV==='production'){}
 app.use(express.static('frontend/build'));
-
+// mongoose.set('strictQuery', false);
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
