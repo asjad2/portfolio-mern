@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const SignupStructure = mongoose.Schema({
   FullName: { type: String },
@@ -25,16 +26,32 @@ const SignupStructure = mongoose.Schema({
   PhoneNumber: {
     type: String,
   },
+  tokens: [
+    {
+      token: { type: String,
+         required: true }
+    }
+  ]
 });
 
-
-SignupStructure.pre('save',async function (next) {
-  if (this.isModified('Password')) {
+SignupStructure.pre("save", async function (next) {
+  if (this.isModified("Password")) {
     this.Password = await bcrypt.hash(this.Password, 12);
     this.confirmPassword = await bcrypt.hash(this.confirmPassword, 12);
   }
   next();
 });
+SignupStructure.methods.generateAuthToken = async function () {
+  try {
+    let token = jwt.sign({ _id: this._id }, process.env.Secret_Key);
+    this.tokens = this.tokens.concat({ token: token });
+    
+    await this.save();
+    return token;
+  } catch (error) {
+    
+  }
+};
 
 const SignupModel = mongoose.model("Sign Up Data", SignupStructure);
 
