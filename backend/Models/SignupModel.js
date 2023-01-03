@@ -39,6 +39,7 @@ SignupStructure.pre("save", async function (next) {
     this.Password = await bcrypt.hash(this.Password, 12);
     this.confirmPassword = await bcrypt.hash(this.confirmPassword, 12);
   }
+  
   next();
 });
 SignupStructure.methods.generateAuthToken = async function () {
