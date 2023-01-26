@@ -92,11 +92,11 @@ export const Login = async (req, res) => {
         if (isMatch) {
           let token = await userlogin.generateAuthToken();
           res.cookie("token", token, {
-            expires: new Date(Date.now() + 40000),
+            expires: new Date(Date.now() + 4000000),
             httpOnly: true,
           });
           console.log("loged in successfully");
-          res.send("200");
+          res.status(200).send("Login Successful")
         } else {
           console.log("Invalid credentials");
 
@@ -131,6 +131,12 @@ export const getMembers = async (req, res) => {
   }
   return res.status(200).json(Member);
 };
+
+export const Logout= async (req,res)=>{
+  res.clearCookie('token', {path:'/'})
+  res.status(200).send("Logout Successful")
+  console.log('log out successfully')
+}
 
 // export const getApplicationById = async (req, res) => {
 //   try {

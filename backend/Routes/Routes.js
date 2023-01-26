@@ -1,4 +1,4 @@
-import { postMessages,postMembers,getMessages,deleteMessages,Login,getMembers,verifiedToken } from "./../Controllers/Controllers.js";
+import { postMessages,postMembers,getMessages,deleteMessages,Login,getMembers,verifiedToken,Logout } from "./../Controllers/Controllers.js";
 
 import express from "express";
 
@@ -10,5 +10,6 @@ router.get("/getMessages" ,getMessages);
 router.delete("/deleteMessages/:id",deleteMessages)
 router.post("/loginMembers",Login)
 router.get("/getMembers",verifiedToken,getMembers)
+router.get("/Logout",Logout)
 export default router;
 
